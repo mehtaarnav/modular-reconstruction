@@ -48,3 +48,10 @@ pip install fpylll cysignals sympy
 python3 -m pytest crt_codes -q
 python3 -m crt_codes.experiment --trials 12
 ```
+
+## Stage 2: Galois-folded cyclotomic codes (`folded.py`)
+
+See `RESEARCH.md` for the literature, construction, heuristic radius
+(s/(s+1))·(1 − R) and current results. On ℚ(ζ_11) with n = 20 and rate 0.156,
+the decoder corrects 13 and 14 random errors against a Johnson radius of 12.09.
+Worst-case two-codeword tests are in `beyond_johnson.py`.

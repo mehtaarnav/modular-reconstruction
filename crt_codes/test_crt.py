@@ -28,3 +28,30 @@ def test_prime_power_partial_agreement_counts():
     w[0] = (w[0] + p) % code.moduli[0]  # still agrees mod p, not mod p^2
     full = sum(math.log(q) for q in code.moduli)
     assert abs(code.agreement_weight(m, w) - (full - math.log(p))) < 1e-9
+
+
+def test_folded_decodes_past_johnson():
+    """Q(zeta_11), n=20: Johnson radius is 12.09 errors; decode 13. (~30 s)"""
+    import math
+    import random
+    from crt_codes.folded import CycloCode, decode
+    code = CycloCode(M=11, n=20, bits=24, coeff_bits=71, seed=2)
+    rng = random.Random(1)
+    e = 13
+    assert e > code.n * (1 - math.sqrt(code.rate()))
+    c = code.random_message(rng)
+    r = code.corrupt(code.encode(c), e, rng)
+    cands, _ = decode(code, r, 7)
+    assert c in cands
+
+
+def test_folded_two_codeword_mixture():
+    import random
+    from crt_codes.folded import CycloCode, decode
+    code = CycloCode(M=5, n=16, bits=24, coeff_bits=50, seed=2)
+    rng = random.Random(7)
+    al, be = code.random_message(rng), code.random_message(rng)
+    wa, wb = code.encode(al), code.encode(be)
+    r = wa[:8] + wb[8:]
+    cands, _ = decode(code, r, 3)
+    assert al in cands and be in cands
