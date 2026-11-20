@@ -4,3 +4,4 @@ M=11 phi=10 n=20 rate=0.156 s=7
   capacity: errors < 16.88
 random errors e=15: 0/3
 random errors e=16: 0/3
+two-codeword mixture, agreements alpha=7 beta=7 (Johnson needs >7.91): AB/list2/null1 AB/list2/null1 AB/list2/null1
