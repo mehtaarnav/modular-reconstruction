@@ -106,9 +106,26 @@ fields, the analogous control would come from Rubin's main conjecture for imagin
 fields. There is a `GaloisLibrary/BernoulliNumbers` folder in the development, but I have not
 traced this path.
 
-## Open question
+## The GL₂ / Artin route is blocked too
 
-Can the theta-lift chain be run without a CM container? Alternatively, can L(s, ψ) be reached as a
-factor of an L-function to which the CM machinery does apply? For example, L(s, ψ) is the
-L-function of a dihedral weight-one form on GL₂/ℚ. The smallest test case is a cubic character of
-Cl(ℚ(√−23)).
+Smallest test case: K = ℚ(√−23), h_K = 3, ψ a cubic class-group character. Its field L is the
+Hilbert class field, the splitting field of x³ − x − 1, with Gal(L/ℚ) ≅ S₃. Then
+L(s, ψ) = L(s, ρ) for the 2-dimensional representation ρ of S₃. This is the L-function of the
+weight-one form η(z)η(23z). Also ζ_F = ζ · L(s, ρ) for the cubic field F = ℚ[x]/(x³ − x − 1),
+so the target is equivalent to RH for ζ_F.
+
+1. **L(s, ρ) is not a factor of ζ_E for any CM field E.** ρ occurs in Ind_E^ℚ 1 only if the image
+   of Gal(Ẽ/E) in S₃ fixes a nonzero vector of ρ. That forces the image to be trivial or of
+   order 2, so E ⊇ L or E ⊇ a conjugate of F. F has signature (1,1), so neither F nor L is CM or
+   totally real. Neither can lie in a CM field.
+2. **Changing the base field to K (which is CM) does not help.** The analogous container would be
+   E/K abelian with ψ among its characters, so E ⊇ L again.
+3. **The root cause is definiteness, not unitary groups as such.** The theta lifts run between
+   totally definite groups. For a semisimple group, being compact at an infinite place is only
+   possible at a real place, since at a complex place its points form a complex Lie group, which
+   is noncompact. So any definite version needs a totally real field of definition, which for
+   unitary groups means a CM container.
+
+So extending this architecture beyond Dirichlet characters appears to need an indefinite version
+of the "theta lifts mimic multiplicity" mechanism, on non-compact groups and Shimura varieties.
+That would be new mathematics, not a port.
