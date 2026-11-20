@@ -1,0 +1,6 @@
+M=11 phi=10 n=20 rate=0.156 s=7
+  Johnson: errors < 12.09  (agreement > 7.91)
+  predicted: errors < 14.38  (agreement > 5.62)
+  capacity: errors < 16.88
+random errors e=15: 0/3
+random errors e=16: 0/3
