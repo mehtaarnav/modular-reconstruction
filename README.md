@@ -81,6 +81,7 @@ See the **[reproduction guide](docs/REPRODUCING.md)** for environment notes, exp
 | [`crt_codes/notes/scalar-affine-duality-literature.md`](crt_codes/notes/scalar-affine-duality-literature.md) | Connection to Cohn–Heninger and interleaved CRT locator lattices |
 | [`crt_codes/RESEARCH.md`](crt_codes/RESEARCH.md) | Historical research notebook; exploratory claims are not current theorems |
 | [`notes/`](notes/) | Separate exploratory notes on formalized number theory |
+| [`CONTRIBUTING.md`](CONTRIBUTING.md) | How to submit reproducible changes or corrections |
 
 ## How to read the claims
 
