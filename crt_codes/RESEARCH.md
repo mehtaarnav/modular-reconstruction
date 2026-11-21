@@ -1,5 +1,7 @@
 # Integer codes past the Johnson bound via Galois folding
 
+> **Current status / correction (2026-11-21):** This file is an *exploratory historical research notebook*, not the current proved-results ledger. Later audits demonstrated that the fully certified PR #2 Trial-0 three-message result is recovered by an 11-dimensional **scalar affine** decoder, with exactly the same rational affine space and complete integer list as the Galois decoder. That scalar interpolation lattice is a degree-one Cohn–Heninger specialization and an exact weighted dual of the interleaved CRT locator lattice. Its original beyond-Johnson heuristic and suggested novelty are **not proved**. See **[ESTABLISHED_RESULTS.md](results/ESTABLISHED_RESULTS.md)** for the precise general propositions, fixed-instance certificates, historical threshold discrepancies, and strictly separated conjectural ideas. Proposed large-parameter counterexamples and random-noise rank expectations are not proved here.
+
 ## The question
 
 For polynomials, list decoding up to capacity (1 − R) is now essentially solved:

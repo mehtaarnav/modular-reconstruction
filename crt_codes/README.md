@@ -1,5 +1,7 @@
 # CRT codes: integer "multiplicity" and the Johnson-to-capacity gap
 
+> **Certified status (2026-11-21):** This page predates the exact PR #2 Trial-0 audits and documents exploratory baseline experiments. Its numerical results must not be interpreted as worst-case decoding theorems; in particular `experiment.py` supplies a decoder parameter computed from the **true transmitted message**, so those baseline measurements are **oracle-assisted**. The cyclotomic/Galois success on the fixed Trial-0 instance was matched by the smaller scalar affine decoder; no Galois-specific advantage was established. For the current statements and exact certificates, consult **[Established results and certificates](results/ESTABLISHED_RESULTS.md)**. The trial-0 claim is not a general beyond-Johnson result.
+
 Alpöge's RH note (alpo.ge/remark.pdf, 2026-11-20) names the obstacle his proof
 gets around: Stepanov's method needs *multiplicity*, and "multiplicity is hard to
 find over the integers, corresponding to something like differentiating whole
