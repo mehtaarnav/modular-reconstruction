@@ -1,13 +1,15 @@
-name: PR #2 single-run parameter and timing audit
+name: PR #2 Trial-0 exact Stage B certificate
 on:
   pull_request:
     paths:
-      - 'crt_codes/**'
+      - 'crt_codes/integer_affine.py'
+      - 'crt_codes/stage_b_certificate.py'
+      - 'crt_codes/test_integer_affine.py'
       - '.github/workflows/triad-audit.yml'
   workflow_dispatch:
 
 jobs:
-  instrumented-reproduction:
+  stage-b-single-reproduction:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -15,15 +17,15 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Install exact pinned major dependencies
+      - name: Pin exact dependencies from prior PR #2 audit
         run: python -m pip install "sympy==1.14.0" "pytest==9.2.0" "fpylll==0.6.4" "cysignals==1.12.5"
-      - name: Reference-decoder regression tests
-        run: python -m pytest crt_codes/test_exhaustive.py -q
-      - name: One fully instrumented reproduction, existing trial zero
-        run: python -m crt_codes.triad_audit --trials 1 --seed 20261121 --instrument --output triad-instrumented.json
+      - name: Exact arithmetic unit tests (not new received-word trials)
+        run: python -m pytest crt_codes/test_integer_affine.py crt_codes/test_exhaustive.py -q
+      - name: One exact Stage B certificate on the existing Trial-0 received word
+        run: python -m crt_codes.stage_b_certificate --output stage-b-certificate.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: triad-one-instrumented
-          path: triad-instrumented.json
+          name: pr2-trial0-stage-b-exact-certificate
+          path: stage-b-certificate.json
           if-no-files-found: ignore
