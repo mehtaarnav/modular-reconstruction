@@ -1,19 +1,6 @@
-<p align="center">
-  <img src="assets/cover.svg" width="100%" alt="Quantum Shenanigans — a research notebook on modular codes, lattices and number fields">
-</p>
+# Quantum Shenanigans
 
-<p align="center">
-  <strong>Computational number theory, error-correcting codes, and proof-backed experiments.</strong>
-</p>
-
-<p align="center">
-  <a href="#the-question">Overview</a> ·
-  <a href="#a-certified-case-study">Results</a> ·
-  <a href="#reproduce-the-result">Reproduce</a> ·
-  <a href="#repository-guide">Explore</a>
-</p>
-
----
+CRT codes, lattice reduction, and certified modular reconstruction.
 
 ## The question
 
@@ -28,10 +15,6 @@ The work is exploratory rather than a production decoding library.
 Our most thoroughly checked experiment uses 20 prime-modulus blocks over the ten-dimensional coefficient space associated with \(\mathbb{Q}(\zeta_{11})\). A received word mixes blocks from three different codewords. Each codeword agrees with only **6 of the 20 blocks**.
 
 Two approaches independently recover the same solution set:
-
-<p align="center">
-  <img src="assets/pipeline.svg" width="100%" alt="The same received word leads through scalar or Galois-linear lattice decoding to an identical rank-eight affine plane and three certified messages">
-</p>
 
 | Fixed Trial-0 result | Certified outcome |
 | :--- | :--- |
