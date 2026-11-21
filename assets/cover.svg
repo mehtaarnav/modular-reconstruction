@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="320" viewBox="0 0 1200 320" role="img" aria-labelledby="title desc">
+  <title id="title">Quantum Shenanigans — research notebook</title>
+  <desc id="desc">Dark navy research notebook banner with a subtle orbit of modular points and a lattice grid.</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0c1528"/>
+      <stop offset="0.58" stop-color="#132943"/>
+      <stop offset="1" stop-color="#102c3b"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#71e1c2"/>
+      <stop offset="1" stop-color="#9fbafb"/>
+    </linearGradient>
+    <pattern id="grid" width="36" height="36" patternUnits="userSpaceOnUse">
+      <path d="M 36 0 L 0 0 0 36" fill="none" stroke="#547186" stroke-opacity=".18" stroke-width="1"/>
+    </pattern>
+    <filter id="glow" x="-70%" y="-70%" width="240%" height="240%">
+      <feGaussianBlur stdDeviation="6"/>
+    </filter>
+  </defs>
+  <rect width="1200" height="320" rx="14" fill="url(#background)"/>
+  <rect width="1200" height="320" rx="14" fill="url(#grid)"/>
+  <path d="M 0 270 C 340 170, 540 388, 1200 136" fill="none" stroke="#6de2c4" stroke-width="1.4" opacity=".17"/>
+  <path d="M 0 300 C 340 200, 620 395, 1200 179" fill="none" stroke="#91b2ff" stroke-width="1.1" opacity=".16"/>
+  <rect x="70" y="42" width="8" height="8" rx="2" fill="#76e6c7"/>
+  <text x="91" y="51" fill="#91cbbf" font-family="Arial, Helvetica, sans-serif" letter-spacing="3" font-weight="600" font-size="13">RESEARCH NOTEBOOK</text>
+  <text x="65" y="146" fill="#f8fcff" font-family="Arial, Helvetica, sans-serif" font-size="68" font-weight="700" letter-spacing="-2.1">Quantum</text>
+  <text x="65" y="218" fill="#f8fcff" font-family="Arial, Helvetica, sans-serif" font-size="68" font-weight="700" letter-spacing="-2.1">Shenanigans</text>
+  <rect x="70" y="248" width="82" height="3" rx="1.5" fill="url(#accent)"/>
+  <text x="70" y="285" fill="#b6d0dc" font-family="Arial, Helvetica, sans-serif" font-size="16" letter-spacing=".5">Modular codes  /  lattices  /  number fields</text>
+  <g transform="translate(970 160)">
+    <circle r="121" stroke="#67abc2" stroke-opacity=".22" fill="none" stroke-width="1.2"/>
+    <circle r="92" stroke="#a1b7f4" stroke-opacity=".47" fill="none" stroke-width="1.4" stroke-dasharray="5 7"/>
+    <circle r="60" stroke="#79cabd" stroke-opacity=".19" fill="none" stroke-width="1.2"/>
+    <path d="M -92 0 Q 0 -108 92 0 Q 0 108 -92 0" fill="none" stroke="#91aef0" stroke-opacity=".52" stroke-width="1.4"/>
+    <path d="M 0 -92 Q 97 0 0 92 Q -97 0 0 -92" fill="none" stroke="#77dfc2" stroke-opacity=".5" stroke-width="1.3"/>
+    <path d="M-92 0H92M0-92V92" stroke="#9acbcf" stroke-opacity=".2" stroke-width="1"/>
+    <circle r="11" fill="#8ce5d0" opacity=".35" filter="url(#glow)"/>
+    <circle r="5.5" fill="#a6fff0"/>
+    <g fill="#a9c5fa">
+      <circle cx="0" cy="-92" r="5.5"/>
+      <circle cx="54.1" cy="-74.4" r="4.2"/>
+      <circle cx="87.5" cy="-28.4" r="4.2"/>
+      <circle cx="87.5" cy="28.4" r="4.2"/>
+      <circle cx="54.1" cy="74.4" r="5.5"/>
+    </g>
+    <g fill="#74e4bf">
+      <circle cx="0" cy="92" r="5.5"/>
+      <circle cx="-54.1" cy="74.4" r="4.2"/>
+      <circle cx="-87.5" cy="28.4" r="4.2"/>
+      <circle cx="-87.5" cy="-28.4" r="4.2"/>
+      <circle cx="-54.1" cy="-74.4" r="5.5"/>
+    </g>
+    <g fill="#8bb4cc" opacity=".36">
+      <circle cx="-122" cy="-80" r="2"/><circle cx="-126" cy="-24" r="2"/>
+      <circle cx="-116" cy="40" r="2"/><circle cx="-96" cy="103" r="2"/>
+      <circle cx="102" cy="-100" r="2"/><circle cx="123" cy="-44" r="2"/>
+      <circle cx="124" cy="28" r="2"/><circle cx="96" cy="106" r="2"/>
+    </g>
+    <text x="0" y="137" font-family="Arial, Helvetica, sans-serif" text-anchor="middle" letter-spacing="2.8" font-size="11" fill="#b6d3dd">STRUCTURE · PROOF · REPRODUCE</text>
+  </g>
+</svg>

@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="352" viewBox="0 0 1200 352" role="img" aria-labelledby="title desc">
+  <title id="title">Two decoding paths, one certified solution space</title>
+  <desc id="desc">The fixed Trial-0 received word can be decoded by either an eleven-dimensional scalar CRT lattice or a ninety-dimensional Galois-linear lattice. Both yield the same rational affine plane and the same three verified messages after exact integer extraction.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+      <path d="M0 0L7 3.5L0 7Z" fill="#93a4b8"/>
+    </marker>
+    <style>
+      .label{font:700 17px Arial,Helvetica,sans-serif;fill:#12243d}
+      .small{font:14px Arial,Helvetica,sans-serif;fill:#51657d}
+      .eyebrow{font:600 12px Arial,Helvetica,sans-serif;fill:#54738a;letter-spacing:1.2px}
+      .flow{stroke:#93a4b8;stroke-width:2;fill:none;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect width="1200" height="352" rx="13" fill="#f7fafc"/>
+  <text x="36" y="35" class="eyebrow">CERTIFIED TRIAL 0 · SAME RECEIVED WORD</text>
+  <path class="flow" d="M215 152H254"/>
+  <path class="flow" d="M457 152H488V113H517"/>
+  <path class="flow" d="M215 174H238V253H517"/>
+  <path class="flow" d="M714 113H741V157H762"/>
+  <path class="flow" d="M714 253H741V187H762"/>
+  <path class="flow" d="M969 174H990"/>
+  <g>
+    <rect x="35" y="112" width="180" height="100" rx="10" fill="#fff" stroke="#cbd8e6"/>
+    <rect x="35" y="112" width="5" height="100" rx="2" fill="#5d8fb1"/>
+    <text x="57" y="143" class="eyebrow">INPUT</text>
+    <text x="57" y="169" class="label">Received blocks</text>
+    <text x="57" y="193" class="small">20 × 10 residues</text>
+  </g>
+  <g>
+    <rect x="255" y="112" width="202" height="100" rx="10" fill="#fff" stroke="#cbd8e6"/>
+    <text x="276" y="143" class="eyebrow">CHANGE OF BASIS</text>
+    <text x="276" y="169" class="label">Vandermonde / CRT</text>
+    <text x="276" y="193" class="small">10 coefficient streams</text>
+  </g>
+  <g>
+    <rect x="518" y="75" width="196" height="79" rx="10" fill="#e2f7ed" stroke="#8ad5b3"/>
+    <text x="538" y="100" class="eyebrow">SCALAR RELATIONS</text>
+    <text x="538" y="125" class="label">11-dimensional LLL</text>
+    <text x="538" y="143" class="small">8 certified equations</text>
+  </g>
+  <g>
+    <rect x="518" y="214" width="196" height="79" rx="10" fill="#eaf0ff" stroke="#a4b8e9"/>
+    <text x="538" y="239" class="eyebrow">GALOIS RELATIONS</text>
+    <text x="538" y="264" class="label">90-dimensional LLL</text>
+    <text x="538" y="282" class="small">6 certified equations</text>
+  </g>
+  <g>
+    <rect x="762" y="126" width="207" height="96" rx="10" fill="#fff" stroke="#b6c6d7"/>
+    <text x="781" y="155" class="eyebrow">EXACT LINEAR ALGEBRA</text>
+    <text x="781" y="182" class="label">Same affine plane</text>
+    <text x="781" y="205" class="small">Rank 8 · nullity 2</text>
+  </g>
+  <g>
+    <rect x="992" y="126" width="173" height="96" rx="10" fill="#0d3545" stroke="#0d3545"/>
+    <text x="1010" y="155" font-size="12" font-family="Arial,Helvetica,sans-serif" fill="#85dbc5" letter-spacing="1.1" font-weight="700">CERTIFIED LIST</text>
+    <text x="1010" y="184" font-size="20" font-family="Arial,Helvetica,sans-serif" fill="#fff" font-weight="700">3 messages</text>
+    <text x="1010" y="207" font-size="13" font-family="Arial,Helvetica,sans-serif" fill="#d3e9ec">Complete at ≥6 blocks</text>
+  </g>
+  <rect x="35" y="314" width="1130" height="1" fill="#dbe5ed"/>
+  <text x="37" y="337" class="small">Exact integer kernel saturation + rational polytope bounds + exhaustive verification complete the fixed-instance certificate.</text>
+</svg>

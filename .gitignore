@@ -1,2 +1,12 @@
 __pycache__/
 .pytest_cache/
+.venv/
+*.py[cod]
+*.egg-info/
+
+# Local reproduction outputs (archival reports remain tracked under crt_codes/results/)
+/stage-b-certificate.json
+/scalar-affine-trial0.json
+/triad-reference.json
+/triad-full.json
+/triad-instrumented.json
