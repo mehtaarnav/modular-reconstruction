@@ -1,4 +1,4 @@
-name: Cyclotomic triad audit
+name: PR #2 single-run parameter and timing audit
 on:
   pull_request:
     paths:
@@ -7,42 +7,23 @@ on:
   workflow_dispatch:
 
 jobs:
-  reference:
+  instrumented-reproduction:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Install reference dependencies
-        run: python -m pip install --upgrade sympy pytest
-      - name: Pure-Python exhaustive reference tests
+      - name: Install exact pinned major dependencies
+        run: python -m pip install "sympy==1.14.0" "pytest==9.2.0" "fpylll==0.6.4" "cysignals==1.12.5"
+      - name: Reference-decoder regression tests
         run: python -m pytest crt_codes/test_exhaustive.py -q
-      - name: Three-message reference audit
-        run: python -m crt_codes.triad_audit --trials 3 --skip-lattice --output triad-reference.json
+      - name: One fully instrumented reproduction, existing trial zero
+        run: python -m crt_codes.triad_audit --trials 1 --seed 20261121 --instrument --output triad-instrumented.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: triad-reference
-          path: triad-reference.json
-          if-no-files-found: ignore
-
-  lattice:
-    runs-on: ubuntu-latest
-    timeout-minutes: 45
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-      - name: Install full decoding dependencies
-        run: python -m pip install --upgrade sympy pytest fpylll cysignals
-      - name: Three-message lattice-vs-reference audit
-        run: python -m crt_codes.triad_audit --trials 3 --output triad-full.json
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: triad-full
-          path: triad-full.json
+          name: triad-one-instrumented
+          path: triad-instrumented.json
           if-no-files-found: ignore

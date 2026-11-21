@@ -31,6 +31,7 @@ from __future__ import annotations
 
 import math
 import random
+import time
 from fractions import Fraction
 
 from sympy import Matrix, isprime, primitive_root
@@ -115,9 +116,10 @@ def _ev(c, x, q):
     return v
 
 
-def decode(code: CycloCode, received, s: int, n_vectors: int = 6):
+def decode(code: CycloCode, received, s: int, n_vectors: int = 6, profile: dict | None = None):
     """Return (candidates, info). Candidates are integer coefficient vectors."""
     from fpylll import LLL, IntegerMatrix
+    t_start = time.perf_counter()
     phi, n = code.phi, code.n
     D = (s + 1) * phi  # unknowns: coefficients of A_0..A_s
     # Rows of the constraint map Z^D -> prod_i F_{p_i}^{phi}, combined by CRT.
@@ -147,7 +149,9 @@ def decode(code: CycloCode, received, s: int, n_vectors: int = 6):
             B[d, D + j] = rows[j][d] * big
     for j in range(phi):
         B[D + j, D + j] = N * big
+    t_construct = time.perf_counter()
     LLL.reduction(B)
+    t_reduce = time.perf_counter()
     vecs = []
     for r in range(dim):
         if all(B[r, D + j] == 0 for j in range(phi)):
@@ -156,10 +160,13 @@ def decode(code: CycloCode, received, s: int, n_vectors: int = 6):
                 vecs.append(v)
         if len(vecs) >= n_vectors:
             break
+    t_vectors = time.perf_counter()
     # Each short vector gives a sigma-linear system for alpha. Vectors that are
     # not short enough give systems the true alpha does not satisfy, so add them
     # one at a time and keep only those consistent with what is already stacked.
     eqs, rhs = [], []
+    selected_vectors = []
+    skipped = 0
     used = 0
     for v in vecs:
         A = [v[l * phi:(l + 1) * phi] for l in range(s + 1)]
@@ -177,20 +184,49 @@ def decode(code: CycloCode, received, s: int, n_vectors: int = 6):
         new_rhs = rhs + [-A[0][row] for row in range(phi)]
         Mx = Matrix(new_eqs)
         if Mx.rank() != Mx.row_join(Matrix(new_rhs)).rank():
+            skipped += 1
             continue  # inconsistent: this vector was not short enough
         eqs, rhs = new_eqs, new_rhs
+        selected_vectors.append(v)
         used += 1
         if Mx.rank() == phi:
             break
+    t_equations = time.perf_counter()
     if not eqs:
         return [], {"vectors": len(vecs), "used": 0, "nullity": None}
     Mx = Matrix(eqs)
     nullity = phi - Mx.rank()
-    cands = _integer_points(eqs, rhs, phi, code.H, radius=2) if nullity <= 3 else []
+    point_profile = {} if profile is not None else None
+    cands = _integer_points(eqs, rhs, phi, code.H, radius=2, profile=point_profile) if nullity <= 3 else []
+    t_end = time.perf_counter()
+    if profile is not None:
+        profile.update({
+            "timings_seconds": {
+                "constraint_crt_and_lattice_construction": t_construct - t_start,
+                "interpolation_lll": t_reduce - t_construct,
+                "short_vector_collection": t_vectors - t_reduce,
+                "sigma_linear_equation_build_and_rank": t_equations - t_vectors,
+                "integer_point_extraction_total": t_end - t_equations,
+                "decode_total": t_end - t_start,
+            },
+            "integer_point_stages": point_profile,
+            "lattice": {"N_bits": N.bit_length(), "N": str(N), "D": D,
+                         "embedded_rows": dim, "congruences": n * phi,
+                         "crt_aggregated_rows": phi, "W0": W0,
+                         "W1": W1, "big": str(big), "n_vectors_cap": n_vectors,
+                         "requested_s": s, "coefficient_degree_bound": phi - 1},
+            "vectors_count": len(vecs), "accepted_count": used,
+            "rejected_inconsistent_count": skipped,
+            "rank": phi - nullity,
+            "short_vector_heights": [{"A0_max_abs": max(map(abs, v[:phi])),
+                                      "other_A_max_abs": max(map(abs, v[phi:]))}
+                                     for v in vecs],
+            "selected_auxiliary_vectors": selected_vectors,  # internal audit only
+        })
     return cands, {"vectors": len(vecs), "used": used, "nullity": nullity}
 
 
-def _integer_points(eqs, rhs, phi, H, radius=2):
+def _integer_points(eqs, rhs, phi, H, radius=2, profile: dict | None = None):
     """Small integer solutions x (|x_t| < H) of eqs * x = rhs.
 
     One LLL on the embedding [eqs^T*W | I | 0 ; -rhs^T*W | 0 | 1] gives both a
@@ -199,6 +235,7 @@ def _integer_points(eqs, rhs, phi, H, radius=2):
     the solution space is a line or plane, e.g. when two codewords both agree
     heavily with the received word."""
     from fpylll import LLL, IntegerMatrix
+    t_start = time.perf_counter()
     m = len(eqs)
     big = 1 << 200
     dim = phi + 1
@@ -210,7 +247,9 @@ def _integer_points(eqs, rhs, phi, H, radius=2):
     for r in range(m):
         B[phi, r] = -rhs[r] * big
     B[phi, m + phi] = 1
+    t_embedding = time.perf_counter()
     LLL.reduction(B)
+    t_lll = time.perf_counter()
     rows = [[B[i, m + t] for t in range(phi)] + [B[i, m + phi]]
             for i in range(dim) if not any(B[i, r] for r in range(m))]
     # Euclid on the last column: leave one row with c = gcd (= +-1 if an integer
@@ -237,12 +276,28 @@ def _integer_points(eqs, rhs, phi, H, radius=2):
             if bb:
                 c = round(sum(x * v for x, v in zip(x0, b)) / bb)
                 x0 = [x - c * v for x, v in zip(x0, b)]
+    t_kernel = time.perf_counter()
     out = set()
     import itertools
     for ts in itertools.product(range(-radius, radius + 1), repeat=len(kernel)):
         x = [x0[t] + sum(tt * kv[t] for tt, kv in zip(ts, kernel)) for t in range(phi)]
         if all(abs(v) < H for v in x):
             out.add(tuple(x))
+    t_end = time.perf_counter()
+    if profile is not None:
+        profile.update({
+            "embedding_construction": t_embedding - t_start,
+            "embedding_lll": t_lll - t_embedding,
+            "euclidean_kernel_and_babai": t_kernel - t_lll,
+            "bounded_grid_enumeration": t_end - t_kernel,
+            "total": t_end - t_start,
+            "nullity_integer_kernel": len(kernel),
+            "radius": radius,
+            "grid_points_examined": (2 * radius + 1) ** len(kernel),
+            "bounded_points_found": len(out),
+            "embedding_big_bits": big.bit_length(),
+            "embedding_rows": dim, "embedding_columns": m + phi + 1,
+        })
     return [list(x) for x in out]
 
 
