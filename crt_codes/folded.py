@@ -24,7 +24,7 @@ Then E = A_0 + sum A_l sigma^{l-1}(alpha) vanishes mod every prime above every
 agreeing block. If it is small enough it is 0 in K, so alpha solves a sigma-linear
 equation whose solution set is an affine Q-space of dimension <= s - 1.
 Intersecting over several short vectors shrinks that space. Heuristic radius:
-error fraction < s/(s+1) - R.
+heuristic error fraction < (s/(s+1))*(1-R).
 """
 
 from __future__ import annotations
@@ -33,7 +33,6 @@ import math
 import random
 from fractions import Fraction
 
-from fpylll import LLL, IntegerMatrix
 from sympy import Matrix, isprime, primitive_root
 
 
@@ -118,6 +117,7 @@ def _ev(c, x, q):
 
 def decode(code: CycloCode, received, s: int, n_vectors: int = 6):
     """Return (candidates, info). Candidates are integer coefficient vectors."""
+    from fpylll import LLL, IntegerMatrix
     phi, n = code.phi, code.n
     D = (s + 1) * phi  # unknowns: coefficients of A_0..A_s
     # Rows of the constraint map Z^D -> prod_i F_{p_i}^{phi}, combined by CRT.
@@ -198,6 +198,7 @@ def _integer_points(eqs, rhs, phi, H, radius=2):
     enumerate x0 + sum t_i b_i with |t_i| <= radius. This is list recovery when
     the solution space is a line or plane, e.g. when two codewords both agree
     heavily with the received word."""
+    from fpylll import LLL, IntegerMatrix
     m = len(eqs)
     big = 1 << 200
     dim = phi + 1
