@@ -50,11 +50,13 @@ def make_triad(code, rng, agreements=6):
 
 
 def run(trials=3, seed=20261121, skip_lattice=False, n=20,
-        M=11, bits=24, coeff_bits=71, s=7):
+        M=11, bits=24, coeff_bits=71, s=7, instrument=False):
     # CycloCode currently imports fpylll at module import time. Keep the
     # pure-Python exhaustive module independent so its tests still work.
     from .folded import CycloCode, decode, agreement
+    t_init = time.perf_counter()
     code = CycloCode(M=M, n=n, bits=bits, coeff_bits=coeff_bits, seed=2)
+    init_seconds = time.perf_counter() - t_init
     rate = code.rate()
     johnson = n * math.sqrt(rate)
     predicted_a = n * (1 / (s + 1) + rate * s / (s + 1))
@@ -63,7 +65,9 @@ def run(trials=3, seed=20261121, skip_lattice=False, n=20,
     rows = []
     rng = random.Random(seed)
     for trial in range(trials):
+        t_generate = time.perf_counter()
         planted, received, support, realized = make_triad(code, rng)
+        generate_seconds = time.perf_counter() - t_generate
         start = time.perf_counter()
         reference, audit = exhaustive_decode(code, received, 6)
         ref_secs = time.perf_counter() - start
@@ -79,10 +83,13 @@ def run(trials=3, seed=20261121, skip_lattice=False, n=20,
         }
         if not skip_lattice:
             start = time.perf_counter()
-            raw, info = decode(code, received, s)
+            profile = {} if instrument else None
+            raw, info = decode(code, received, s, profile=profile)
             secs = time.perf_counter() - start
+            t_verify = time.perf_counter()
             verified = {tuple(v) for v in raw
                         if agreement(code, v, received) >= 6}
+            verify_seconds = time.perf_counter() - t_verify
             row["lattice"] = {
                 **info, "raw_candidates": len(raw),
                 "verified_candidates": len(verified),
@@ -91,6 +98,46 @@ def run(trials=3, seed=20261121, skip_lattice=False, n=20,
                 "spurious_vs_reference": len(verified - ref_set),
                 "seconds": round(secs, 3),
             }
+            if instrument:
+                vectors = profile.pop("selected_auxiliary_vectors")
+                checks = []
+                for c in reference:
+                    agreeing = [i for i, (a, b) in enumerate(zip(code.encode(c), received)) if a == b]
+                    modulus_product = math.prod(code.primes[i] for i in agreeing)
+                    for v in vectors:
+                        A = [v[l * code.phi:(l + 1) * code.phi] for l in range(s + 1)]
+                        E = list(A[0])
+                        for l in range(1, s + 1):
+                            term = code.mul(A[l], code.sigma(c, l - 1))
+                            E = [e + t for e, t in zip(E, term)]
+                        b0 = max(map(abs, A[0]))
+                        bs = sum(max(map(abs, Al)) for Al in A[1:])
+                        uniform_coeff_bound = b0 + 4 * code.phi * (code.H - 1) * bs
+                        checks.append({
+                            "reference_agreements": len(agreeing),
+                            "zero_E": all(v == 0 for v in E),
+                            "max_abs_E": max(map(abs, E)),
+                            "uniform_bound_lt_agreement_modulus": uniform_coeff_bound < modulus_product,
+                            "uniform_bound_bits": uniform_coeff_bound.bit_length(),
+                            "agreement_modulus_bits": modulus_product.bit_length(),
+                        })
+                row["instrumentation"] = {
+                    "code_setup_seconds": init_seconds,
+                    "received_construction_seconds": generate_seconds,
+                    "reference_total_seconds": ref_secs,
+                    "lattice_decode_seconds": secs,
+                    "exact_verification_seconds": verify_seconds,
+                    "profile": profile,
+                    "auxiliary_reference_equation_checks": checks,
+                    "reference_messages_count": len(reference),
+                    "selected_auxiliaries_count": len(vectors),
+                    "all_qualifying_reference_messages_satisfy_selected_equations": all(x["zero_E"] for x in checks),
+                    "all_uniform_coefficient_bounds_certify_vanishing": all(x["uniform_bound_lt_agreement_modulus"] for x in checks),
+                    "primes": code.primes,
+                    "primitive_g": code.g,
+                    "H": str(code.H),
+                    "message_domain_cardinality": str((2 * code.H - 1) ** code.phi),
+                }
         rows.append(row)
     return {
         "parameters": {
@@ -109,9 +156,10 @@ def main():
     p.add_argument("--trials", type=int, default=3)
     p.add_argument("--seed", type=int, default=20261121)
     p.add_argument("--skip-lattice", action="store_true")
+    p.add_argument("--instrument", action="store_true")
     p.add_argument("--output", type=Path)
     args = p.parse_args()
-    result = run(args.trials, args.seed, args.skip_lattice)
+    result = run(args.trials, args.seed, args.skip_lattice, instrument=args.instrument)
     out = json.dumps(result, sort_keys=True, indent=2)
     print(out)
     if args.output:
