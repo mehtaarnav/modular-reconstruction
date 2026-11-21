@@ -1,4 +1,4 @@
-# Quantum Shenanigans
+# Modular Reconstruction
 
 CRT codes, lattice reduction, and certified modular reconstruction.
 
